@@ -10,6 +10,7 @@ public class List {
         q.addFirst('b');
         q.addFirst('c');
         System.out.println(q);
+        System.out.println(q.indexOf('a'));
     }
 
     // Points to the first node in this list
