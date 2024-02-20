@@ -43,7 +43,8 @@ public class LanguageModel {
         while (!in.isEmpty()) {
             c = in.readChar();
             List probs = CharDataMap.get(window);
-            if(probs!=null){
+            if(probs==null){
+                probs = new List();
                 CharDataMap.put(window, probs);
             }
             probs.update(c);
@@ -113,11 +114,12 @@ public class LanguageModel {
         while (textLength!=window.length()) {
             List probs = CharDataMap.get(window);
             if(probs==null){
-                return window;
+                return initialText;
             }
-            window += getRandomChar(probs);
+            initialText += getRandomChar(probs);
+            window = initialText.substring(initialText.length()-windowLength);
         }
-        return window;
+        return initialText;
 		// Your code goes here
 	}
 
@@ -132,21 +134,25 @@ public class LanguageModel {
 	}
 
     public static void main(String[] args) {
-        List q = new List();
-        q.addFirst('c');
-        q.addFirst('o');
-        q.addFirst('m');
-        q.addFirst('m');
-        q.addFirst('i');
-        q.addFirst('t');
-        q.addFirst('t');
-        q.addFirst('e');
-        q.addFirst('e');
-        q.addFirst('_');
-        System.out.println(q);
-        LanguageModel lm = new LanguageModel(0);
-        lm.calculateProbabilities(q);
-        System.out.println(q);
-        System.out.println(q.indexOf('a'));
+        // int windowLength = Integer.parseInt(args[0]);
+        // String initialText = args[1];
+        // int generatedTextLength = Integer.parseInt(args[2]);
+        // Boolean randomGeneration = args[3].equals("random");
+        // String fileName = args[4];
+        int windowLength = 8;
+        String initialText = "FENNYMAN";
+        int generatedTextLength = 1000;
+        Boolean randomGeneration = true;
+        String fileName = "shakespeareinlove.txt";
+        // Create the LanguageModel object
+        LanguageModel lm;
+        if (randomGeneration)
+        lm = new LanguageModel(windowLength);
+        else
+        lm = new LanguageModel(windowLength, 20);
+        // Trains the model, creating the map.
+        lm.train(fileName);
+        // Generates text, and prints it.
+        System.out.println(lm.generate(initialText, generatedTextLength));
     }
 }
