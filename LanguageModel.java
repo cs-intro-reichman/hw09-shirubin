@@ -3,6 +3,7 @@ import java.util.Random;
 
 public class LanguageModel {
 
+
     // The map of this model.
     // Maps windows to lists of charachter data objects.
     HashMap<String, List> CharDataMap;
@@ -33,18 +34,68 @@ public class LanguageModel {
 
     /** Builds a language model from the text in the given file (the corpus). */
 	public void train(String fileName) {
-		// Your code goes here
+        String window = "";
+        char c;
+        In in = new In(fileName);
+        for (int i = 0; i < windowLength; i++) {
+            window += in.readChar();
+        }
+        while (!in.isEmpty()) {
+            c = in.readChar();
+            List probs = CharDataMap.get(window);
+            if(probs!=null){
+                CharDataMap.put(window, probs);
+            }
+            probs.update(c);
+            window += c;
+            window = window.substring(1);
+        }
+        for (List probs : CharDataMap.values()){
+            calculateProbabilities(probs);
+        }
+               
 	}
 
     // Computes and sets the probabilities (p and cp fields) of all the
 	// characters in the given list. */
-	public void calculateProbabilities(List probs) {				
-		// Your code goes here
+	public void calculateProbabilities(List probs) {	
+        ListIterator itr = probs.listIterator(0);	
+        double counter = 0;
+        while (itr.hasNext()) {   
+            counter+=itr.current.cp.count;
+            itr.next();
+        }	
+        ListIterator prev = probs.listIterator(0);	
+        itr = probs.listIterator(1);	
+        for (int i = 0; i < probs.getSize()-1; i++) { 
+            itr.current.cp.p=itr.current.cp.count/counter;
+            if (i==0){
+                prev.current.cp.p=prev.current.cp.count/counter;
+                prev.current.cp.cp=prev.current.cp.p;
+                itr.current.cp.cp = prev.current.cp.cp + itr.current.cp.p; 
+            }
+            else{
+                itr.current.cp.cp = prev.current.cp.cp + itr.current.cp.p; 
+            }
+            prev.next();
+            itr.next();
+        }
 	}
 
     // Returns a random character from the given probabilities list.
 	public char getRandomChar(List probs) {
 		// Your code goes here
+        double r = randomGenerator.nextDouble();
+        char randChar = ' ';
+        ListIterator itr = probs.listIterator(0);	
+        for (int i = 0; i < probs.getSize(); i++) {
+            if (r <= itr.current.cp.cp){
+                randChar = itr.current.cp.chr;
+                return randChar;
+            } 
+            itr.next();
+        }
+        return randChar;
 	}
 
     /**
@@ -55,6 +106,18 @@ public class LanguageModel {
 	 * @return the generated text
 	 */
 	public String generate(String initialText, int textLength) {
+        if(textLength<windowLength){
+            return initialText;
+        }
+        String window = initialText.substring(initialText.length()-windowLength);
+        while (textLength!=window.length()) {
+            List probs = CharDataMap.get(window);
+            if(probs==null){
+                return window;
+            }
+            window += getRandomChar(probs);
+        }
+        return window;
 		// Your code goes here
 	}
 
@@ -69,6 +132,21 @@ public class LanguageModel {
 	}
 
     public static void main(String[] args) {
-		// Your code goes here
+        List q = new List();
+        q.addFirst('c');
+        q.addFirst('o');
+        q.addFirst('m');
+        q.addFirst('m');
+        q.addFirst('i');
+        q.addFirst('t');
+        q.addFirst('t');
+        q.addFirst('e');
+        q.addFirst('e');
+        q.addFirst('_');
+        System.out.println(q);
+        LanguageModel lm = new LanguageModel(0);
+        lm.calculateProbabilities(q);
+        System.out.println(q);
+        System.out.println(q.indexOf('a'));
     }
 }

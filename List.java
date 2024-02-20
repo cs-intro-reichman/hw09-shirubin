@@ -1,17 +1,19 @@
+
+
 /** A linked list of character data objects.
  *  (Actually, a list of Node objects, each holding a reference to a character data object.
  *  However, users of this class are not aware of the Node objects. As far as they are concerned,
  *  the class represents a list of CharData objects. Likwise, the API of the class does not
  *  mention the existence of the Node objects). */
 public class List {
-    public static void main(String[] args) {
-        List q = new List();
-        q.addFirst('a');
-        q.addFirst('b');
-        q.addFirst('c');
-        System.out.println(q);
-        System.out.println(q.indexOf('a'));
-    }
+    // public static void main(String[] args) {
+    //     List q = new List();
+    //     q.addFirst('a');
+    //     q.addFirst('b');
+    //     q.addFirst('c');
+    //     System.out.println(q);
+    //     System.out.println(q.indexOf('a'));
+    // }
 
     // Points to the first node in this list
     private Node first;
@@ -114,6 +116,9 @@ public class List {
      *  If the index is negative or is greater than the size of this list, 
      *  throws an IndexOutOfBoundsException. */
     public CharData get(int index) {
+        if (index<0 || index>size) {
+            throw new IndexOutOfBoundsException();
+        }   
         Node current = first;
         for (int i = 0; i < index; i++) {
             current = current.next;
