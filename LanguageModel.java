@@ -166,6 +166,6 @@ public class LanguageModel {
         // Trains the model, creating the map.
         lm.train(fileName);
         // Generates text, and prints it.
-        System.out.println(lm.generate(initialText, generatedTextLength));
+        // System.out.println(lm.generate(initialText, generatedTextLength));
     }
 }
