@@ -1,4 +1,5 @@
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 public class LanguageModel {
@@ -51,10 +52,14 @@ public class LanguageModel {
             window += c;
             window = window.substring(1);
         }
+        
         for (List probs : CharDataMap.values()){
             calculateProbabilities(probs);
-        }
-               
+        } 
+        // for (Map.Entry<String,List> entry: CharDataMap.entrySet()){
+
+        //     System.out.println( entry.getKey() + "  " + entry.getValue());
+        // } 
 	}
 
     // Computes and sets the probabilities (p and cp fields) of all the
@@ -68,19 +73,27 @@ public class LanguageModel {
         }	
         ListIterator prev = probs.listIterator(0);	
         itr = probs.listIterator(1);	
-        for (int i = 0; i < probs.getSize()-1; i++) { 
-            itr.current.cp.p=itr.current.cp.count/counter;
-            if (i==0){
-                prev.current.cp.p=prev.current.cp.count/counter;
-                prev.current.cp.cp=prev.current.cp.p;
-                itr.current.cp.cp = prev.current.cp.cp + itr.current.cp.p; 
-            }
-            else{
-                itr.current.cp.cp = prev.current.cp.cp + itr.current.cp.p; 
-            }
-            prev.next();
-            itr.next();
+        int probsSize = probs.getSize();
+        if(probsSize==1){
+            prev.current.cp.p = 1;
+            prev.current.cp.cp = 1;
         }
+        else{
+            for (int i = 0; i < probsSize-1; i++) { 
+                itr.current.cp.p=itr.current.cp.count/counter;
+                if (i==0){
+                    prev.current.cp.p=prev.current.cp.count/counter;
+                    prev.current.cp.cp=prev.current.cp.p;
+                    itr.current.cp.cp = prev.current.cp.cp + itr.current.cp.p; 
+                }
+                else{
+                    itr.current.cp.cp = prev.current.cp.cp + itr.current.cp.p; 
+                }
+                prev.next();
+                itr.next();
+            }
+        }
+        
 	}
 
     // Returns a random character from the given probabilities list.
