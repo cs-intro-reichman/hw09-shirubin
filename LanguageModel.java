@@ -124,7 +124,9 @@ public class LanguageModel {
             return initialText;
         }
         String window = initialText.substring(initialText.length()-windowLength);
-        while (textLength!=initialText.length()) {
+        int counter = 0;
+        while (textLength!=counter) {
+            counter++;
             List probs = CharDataMap.get(window);
             if(probs==null){
                 return initialText;
@@ -132,6 +134,7 @@ public class LanguageModel {
             initialText += getRandomChar(probs);
             window = initialText.substring(initialText.length()-windowLength);
         }
+        // System.out.println(counter);
         return initialText;
 		// Your code goes here
 	}
@@ -168,20 +171,20 @@ public class LanguageModel {
         // // Generates text, and prints it.
         // // System.out.println(lm.generate(initialText, generatedTextLength));
 
-        // int windowLength = 7;
-        // String initialText = "Natural";
-        // int generatedTextLength = 172;
-        // Boolean randomGeneration = false;
-        // String fileName = "originofspecies.txt";
-        // // Create the LanguageModel object
-        // LanguageModel lm;
+        int windowLength = 7;
+        String initialText = "Natural";
+        int generatedTextLength = 172;
+        Boolean randomGeneration = false;
+        String fileName = "originofspecies.txt";
+        // Create the LanguageModel object
+        LanguageModel lm;
         // if (randomGeneration)
         // lm = new LanguageModel(windowLength);
         // else
-        // lm = new LanguageModel(windowLength, 20);
-        // // Trains the model, creating the map.
-        // lm.train(fileName);
-        // // Generates text, and prints it.
-        // System.out.println(lm.generate(initialText, generatedTextLength));
+        lm = new LanguageModel(windowLength, 20);
+        // Trains the model, creating the map.
+        lm.train(fileName);
+        // Generates text, and prints it.
+        System.out.println(lm.generate(initialText, generatedTextLength));
     }
 }
